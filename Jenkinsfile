@@ -1,5 +1,9 @@
 pipeline{
     agent { label 'Jenkins-Agent' } 
+    tools {
+        jdk 'Java11'
+        
+    }
     environment{
         VERSION = "${env.BUILD_ID}"
     }
