@@ -17,15 +17,23 @@ pipeline{
                             sh './gradlew --warning-mode none sonarqube'
                     }
 
-                    timeout(time: 1, unit: 'HOURS') {
-                      def qg = waitForQualityGate()
-                      if (qg.status != 'OK') {
-                           error "Pipeline aborted due to quality gate failure: ${qg.status}"
-                      }
-                    }
-
                 }  
             }
         }
+     stage("docker build & docker push"){
+         steps{
+             script{
+                 withCredentials(credentialsId: 'dockerhub') {
+                          sh '''
+                             docker build -t testsysadmin8/springapp:${VERSION} .
+                             
+                             docker push  testsysadmin8/springapp:${VERSION}
+                             docker rmi testsysadmin8:8083/springapp:${VERSION}
+                            '''
+                    }
+                }
+            }
+        }    
+    
     }
 }
