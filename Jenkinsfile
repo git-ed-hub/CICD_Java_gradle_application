@@ -14,7 +14,7 @@ pipeline{
                 script{
                     withSonarQubeEnv(credentialsId: 'jenkins-sonarqube-token') {
                             sh 'chmod +x gradlew'
-                            sh './gradlew --warning-mode all sonarqube'
+                            sh './gradlew --warning-mode none sonarqube'
                     }
 
                     timeout(time: 1, unit: 'HOURS') {
