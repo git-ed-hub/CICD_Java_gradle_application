@@ -6,8 +6,7 @@ pipeline{
     }
     environment{
         VERSION = "${env.BUILD_ID}"
-        DOCKER_USER = "testsysadmin8"
-        DOCKER_PASS = 'dockerhub'
+        
     }
     stages{
         stage("sonar quality check"){
@@ -25,10 +24,10 @@ pipeline{
      stage("docker build & docker push"){
          steps{
              script{
-                 withCredentials([gitUsernamePassword(credentialsId: 'dockerhub', gitToolName: 'Default')]) {
+                 withCredentials([gitUsernamePassword(credentialsId: 'dockerhub', variable: 'docker_password')]) {
                           sh '''
                              docker build -t testsysadmin8:8083/springapp:${VERSION} .
-                             docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} testsysadmin8:8083 
+                             docker login -u $docker_password -p $docker_password testsysadmin8:8083 
                              docker push  testsysadmin8:8083/springapp:${VERSION}
                              docker rmi testsysadmin8:8083/springapp:${VERSION}
                             '''
