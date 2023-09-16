@@ -25,9 +25,9 @@ pipeline{
              script{
                  withCredentials([gitUsernamePassword(credentialsId: 'dockerhub', gitToolName: 'Default')]) {
                           sh '''
-                             docker build -t testsysadmin8/springapp:${VERSION} .
+                             docker build -t springapp:${VERSION} .
                              
-                             docker push  testsysadmin8/springapp:${VERSION}
+                             docker push  springapp:${VERSION}
                              docker rmi testsysadmin8:8083/springapp:${VERSION}
                             '''
                     }
