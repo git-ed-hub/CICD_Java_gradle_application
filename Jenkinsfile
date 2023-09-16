@@ -26,14 +26,13 @@ pipeline{
      stage("docker build & docker push"){
          steps{
              script{
-                 withCredentials([gitUsernamePassword(credentialsId: 'dockerhub')]) {
                           sh '''
                              docker build -t testsysadmin8:8083/springapp:${VERSION} .
                              docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} testsysadmin8:8083 
                              docker push  testsysadmin8:8083/springapp:${VERSION}
                              docker rmi testsysadmin8:8083/springapp:${VERSION}
                             '''
-                    }
+                    
                 }
             }
         }    
