@@ -28,7 +28,7 @@ pipeline{
                  withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'pass', usernameVariable: 'user')]) {
                          sh '''
                              docker build -t testsysadmin8:8083/springapp:${VERSION} .
-                             docker login -u ${user} -p $pass testsysadmin8:8083 
+                             docker login -u testsysadmin8 -p $pass testsysadmin8:8083 
                              docker push  testsysadmin8:8083/springapp:${VERSION}
                              docker rmi testsysadmin8:8083/springapp:${VERSION}
                             '''
