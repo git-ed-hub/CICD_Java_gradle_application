@@ -37,7 +37,7 @@ pipeline{
        stage("docker build & docker push"){
             steps{
                 script{
-                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass')]) {
                              sh '''
                                 docker build -t 192.168.52.132:8083/${IMAGE_NAME}:${VERSION} .
                                 docker login -u admin -p $pass 192.168.52.132:8083 
@@ -48,14 +48,17 @@ pipeline{
                 }
             }
         }  
-        stage('indentifying misconfigs using datree in helm charts'){
+        stage("pushing the helm charts to nexus"){
             steps{
                 script{
-
-                    dir('kubernetes/') {
-                        
-                              sh 'helm datree test myapp/'
-                        
+                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass')]) {
+                          dir('kubernetes/') {
+                             sh '''
+                                 helmversion=$( helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
+                                 tar -czvf  myapp-${helmversion}.tgz myapp/
+                                 curl -u admin:$pass http://192.168.52.132:8081/repository/helm-hosted/ --upload-file myapp-${helmversion}.tgz -v
+                            '''
+                          }
                     }
                 }
             }
@@ -66,5 +69,5 @@ pipeline{
             always {
                 mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "isma.19.kor@gmail.com";  
             }
-        }
+    }
 }
