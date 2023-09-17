@@ -37,10 +37,10 @@ pipeline{
        stage("docker build & docker push"){
             steps{
                 script{
-                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'docker-pass', usernameVariable: 'docker-user')]) {
+                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass', usernameVariable: 'user')]) {
                              sh '''
                                 docker build -t 192.168.52.132:8083/${IMAGE_NAME}:${VERSION} .
-                                docker login -u {docker-user} -p ${docker-pass} 192.168.52.132:8083 
+                                docker login -u $user -p $pass 192.168.52.132:8083 
                                 docker push  192.168.52.132:8083/${IMAGE_NAME}:${VERSION}
                                 docker rmi 192.168.52.132:8083/${IMAGE_NAME}:${VERSION}
                             '''  
