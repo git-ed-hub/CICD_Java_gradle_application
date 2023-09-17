@@ -6,7 +6,7 @@ pipeline{
     }
     environment{
        VERSION = "${env.BUILD_ID}"
-       APP_NAME = "Gradle-webapp"
+       APP_NAME = "gradle-webapp"
        RELEASE = "1.0.0"
        DOCKER_USER = "testsysadmin8"
        DOCKER_PASS = 'dockerhub'
