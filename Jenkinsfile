@@ -37,7 +37,7 @@ pipeline{
        stage("docker build & docker push"){
             steps{
                 script{
-                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass')]) {
+                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass', usernameVariable: 'user')]) {
                              sh '''
                                 docker build -t 192.168.52.132:8083/${IMAGE_NAME}:${VERSION} .
                                 docker login -u admin -p $pass 192.168.52.132:8083 
@@ -51,7 +51,7 @@ pipeline{
         stage("pushing the helm charts to nexus"){
             steps{
                 script{
-                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass')]) {
+                    withCredentials([usernamePassword(credentialsId: 'nexus', passwordVariable: 'pass', usernameVariable: 'user')]) {
                           dir('kubernetes/') {
                              sh '''
                                  helmversion=$( helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
