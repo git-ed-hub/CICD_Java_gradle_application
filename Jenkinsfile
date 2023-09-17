@@ -34,37 +34,18 @@ pipeline{
                 }  
             }
         }        
-        stage("Build & Push Docker Image") {
-            steps {
-                script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
-
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                    }
+       stage("docker build & docker push"){
+            steps{
+                script{
+                             sh '''
+                                docker build -t 192.168.52.132:8083/${IMAGE_NAME}:${VERSION} .
+                                docker login -u ${DOCKER_USER} -p ${DOCKER_PASS} 192.168.52.132:8083 
+                                docker push  192.168.52.132:8083/${IMAGE_NAME}:${VERSION}
+                                docker rmi 192.168.52.132:8083/${IMAGE_NAME}:${VERSION}
+                            '''  
                 }
             }
-
-       }
-       stage("Trivy Scan") {
-           steps {
-               script {
-	            sh ('docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image ${DOCKER_USER}/${APP_NAME}:latest --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table')
-               }
-           }
-       }
-
-       stage ('Cleanup Artifacts') {
-           steps {
-               script {
-                    sh "docker rmi ${IMAGE_NAME}:${IMAGE_TAG}"
-                    sh "docker rmi ${IMAGE_NAME}:latest"
-               }
-          }
-       }    
+        }   
     
     }
 }
