@@ -40,7 +40,7 @@ pipeline{
                     withCredentials([gitUsernamePassword(credentialsId: 'nexus', variable: 'password')]) {
                              sh '''
                                 docker build -t 192.168.52.132:8083/${IMAGE_NAME}:${VERSION} .
-                                docker login -u admin -p ${password} 192.168.52.132:8083 
+                                docker login -u admin -p $password 192.168.52.132:8083 
                                 docker push  192.168.52.132:8083/${IMAGE_NAME}:${VERSION}
                                 docker rmi 192.168.52.132:8083/${IMAGE_NAME}:${VERSION}
                             '''  
